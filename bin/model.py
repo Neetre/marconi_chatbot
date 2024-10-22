@@ -39,7 +39,7 @@ Always maintain a positive and supportive tone, and prioritize the well-being an
         return response.content
 
 
-async def main():
+async def inference():
     school_info = """
     Name: ITI G. Marconi
     Location: Verona, Italy
@@ -61,4 +61,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(inference())
