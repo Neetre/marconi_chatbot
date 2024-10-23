@@ -6,6 +6,8 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+from flask import Flask, request, jsonify
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 class Model:
@@ -58,6 +60,38 @@ async def inference():
     msg = "Qual è il motto della nostra scuola?"
     response = await m.chat(msg)
     print(response)
+
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def home():
+    return "Hello, World!"
+
+
+@app.route('/chat', methods=['POST'])
+def inference():
+    data = request.get_json()
+    msg = data['message']
+    school_info = """
+    Name: ITI G. Marconi
+    Location: Verona, Italy
+    Motto: "Learning Today, Leading Tomorrow"
+    Grades: 1-5 superiori
+    """
+    '''
+    additional_instructions = """
+    - Provide information about upcoming school events when relevant
+    - Offer study tips and resources when asked about academic subjects
+    - Be prepared to answer questions about school policies and procedures
+    """
+    '''
+    
+    m = Model(GROQ_API_KEY, language="italian", school_info=school_info, additional_instructions="")
+    response = asyncio.run(m.chat(msg))
+    
+    return jsonify({"response": response})
 
 
 if __name__ == "__main__":
