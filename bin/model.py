@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
@@ -67,7 +67,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Hello, World!"
+    return render_template('index.html')
 
 
 @app.route('/chat', methods=['POST'])
@@ -78,15 +78,18 @@ def inference():
     Name: ITI G. Marconi
     Location: Verona, Italy
     Motto: "Learning Today, Leading Tomorrow"
-    Grades: 1-5 superiori
+    Grades: 1 al 5 anno di superiori 
+    Course Offerings: Informatica, Elettronica, Costruzione del Mezzo, Logistica, Telecomunicazioni
+    
+    School events: il 29 ottobre ci sarà la votazione per i rappresentanti degli studenti.
     """
-    '''
+    
     additional_instructions = """
     - Provide information about upcoming school events when relevant
     - Offer study tips and resources when asked about academic subjects
     - Be prepared to answer questions about school policies and procedures
     """
-    '''
+    
     
     m = Model(GROQ_API_KEY, language="italian", school_info=school_info, additional_instructions="")
     response = asyncio.run(m.chat(msg))
@@ -95,4 +98,6 @@ def inference():
 
 
 if __name__ == "__main__":
-    asyncio.run(inference())
+    # asyncio.run(inference())
+    
+    app.run(debug=True)
