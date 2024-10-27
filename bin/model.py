@@ -1,6 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
+from transformers import AutoTokenizer
 import asyncio
 import os
 from dotenv import load_dotenv
@@ -16,6 +17,12 @@ class Model:
         self.language = language
         self.school_info = school_info
         self.additional_instructions = additional_instructions
+        self.tokenizer = AutoTokenizer.from_pretrained(
+    "meta-llama/Llama-3.1-8B"
+)
+
+    def count_tokens(self, text: str):
+        return self.tokenizer(text, return_tensors="pt")["input_ids"].shape[1]
         
     async def chat(self, msg):
         if not msg:
@@ -38,8 +45,10 @@ Always maintain a positive and supportive tone, and prioritize the well-being an
             SystemMessage(content=system_content),
             HumanMessage(content=msg)
         ]
-
+        print(self.count_tokens(system_content +msg))
         response = await self.llm.ainvoke(messages)
+        print(self.count_tokens(response.content))
+        print(f"Total tokens: {self.count_tokens(system_content + msg + response.content)}")
         return response.content
 
 
