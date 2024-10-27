@@ -1,30 +1,16 @@
 from transformers import AutoTokenizer
 
-FILES = [
-    "data/{}-1.txt",
-    "data/{}-2.txt",
-    "data/{}-3.txt",
-    "data/{}-4.txt",
-    "data/{}-5.txt",
-]
-INSTRUCTION = "Summarize the following story in my style"
-
 tokenizer = AutoTokenizer.from_pretrained(
-    "unsloth/llama-3-8b-bnb-4bit"
+    "meta-llama/Llama-3.1-8B"
 )
 
-print(f"{'Total':<12}{'Instruction':<12}{'Story':<12}{'Summary':<12}")
-for pair in FILES:
-    with open(pair.format("story"), "r") as file:
-        story = "".join(file.readlines())
-    with open(pair.format("summary"), "r") as file:
-        summary = "".join(file.readlines())
+def count_tokens(text: str):
+    return tokenizer(text, return_tensors="pt")["input_ids"].shape[1]
 
-    # Count tokens
-    instruction_tokens = tokenizer(INSTRUCTION, return_tensors="pt")["input_ids"].shape[1]
-    story_tokens = tokenizer(story, return_tensors="pt")["input_ids"].shape[1]
-    summary_tokens = tokenizer(summary, return_tensors="pt")["input_ids"].shape[1]
+def read_tokens(file_path: str):
+    with open(file_path, "r") as file:
+        return "".join(file.readlines())
 
-    # Print table of tokens
-    total_tokens = instruction_tokens + story_tokens + summary_tokens
-    print(f"{total_tokens:<12}{instruction_tokens:<12}{story_tokens:<12}{summary_tokens:<12}")
+if __name__ == "__main__":
+    text = read_tokens("./bruh.txt")
+    print(count_tokens(text))

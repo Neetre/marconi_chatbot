@@ -21,7 +21,9 @@ class Model:
         if not msg:
             raise ValueError("Please provide a message to chat with the bot.")
         
-        system_content = f"""You are a helpful assistant on a school community home page. Respond in {self.language}. 
+        system_content = f"""You are a helpful assistant on a school community home page.
+You are responsible for answering questions about the school's courses, events, announcements, and general information.
+Respond in {self.language}. 
 Be concise, friendly, and engaging.
 
 School Information:
@@ -77,21 +79,24 @@ def inference():
     school_info = """
     Name: ITI G. Marconi
     Location: Verona, Italy
-    Motto: "Learning Today, Leading Tomorrow"
     Grades: 1 al 5 anno di superiori 
     Course Offerings: Informatica, Elettronica, Costruzione del Mezzo, Logistica, Telecomunicazioni
-    
-    School events: il 29 ottobre ci sarà la votazione per i rappresentanti degli studenti.
+
+    School events: 
+        - Il 29 ottobre ci sarà la votazione per i rappresentanti degli studenti. Ci saranno solo due liste: "Parliamo con i fatti" e "Con voi, per voi". Consigliamo la lista "Parliamo con i fatti".
+        - L'8 novembre sarà indetto uno sciopero nazionale di 24 ore dei trasporti pubblici. Si consiglia di organizzarsi per tempo.
+
+    Announcements:
+        - Controllate sempre la bacheca per eventuali comunicazioni importanti.
     """
-    
+
     additional_instructions = """
-    - Provide information about upcoming school events when relevant
-    - Offer study tips and resources when asked about academic subjects
-    - Be prepared to answer questions about school policies and procedures
+    - If you don't know the answer to a question, it's okay to say so, and andvise the student to ask a teacher or a school administrator.
+    - Inform that you are still learning and improving, and you might not have all the answers.
     """
     
     
-    m = Model(GROQ_API_KEY, language="italian", school_info=school_info, additional_instructions="")
+    m = Model(GROQ_API_KEY, language="italian", school_info=school_info, additional_instructions=additional_instructions)
     response = asyncio.run(m.chat(msg))
     
     return jsonify({"response": response})
