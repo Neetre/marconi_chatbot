@@ -1,8 +1,14 @@
+import os
 import json
 from typing import List, Dict
 from groq import Groq
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
+
+from dotenv import load_dotenv
+load_dotenv()
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 class DataPipelineProcessor:
     def __init__(self, use_local: bool = False, groq_api_key: str = None, target_language: str = "italian"):
@@ -13,9 +19,9 @@ class DataPipelineProcessor:
             self.client = Groq(api_key=groq_api_key)
         else:
             # Initialize Phi-3-mini for local processing
-            self.tokenizer = AutoTokenizer.from_pretrained("microsoft/phi-3-mini")
+            self.tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3.5-mini-instruct")
             self.model = AutoModelForCausalLM.from_pretrained(
-                "microsoft/phi-3-mini",
+                "microsoft/Phi-3.5-mini-instruct",
                 device_map="auto",
                 torch_dtype=torch.float16
             )
@@ -139,7 +145,7 @@ def main():
     # Or use Groq
     processor_groq = DataPipelineProcessor(
         use_local=False,
-        groq_api_key="your_groq_api_key",
+        groq_api_key=GROQ_API_KEY,
         target_language="italian"
     )
     
@@ -150,7 +156,7 @@ def main():
     """
     
     # Choose which processor to use
-    processor = processor_local  # or processor_groq
+    processor = processor_groq  # or processor_groq or processor_local
     training_data = processor.process_document(sample_text)
     
     # Save to JSON file
