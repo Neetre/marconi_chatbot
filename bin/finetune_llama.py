@@ -1,3 +1,7 @@
+'''
+Video link: https://www.youtube.com/watch?v=3eq84KrdTWY
+'''
+
 from unsloth import FastLanguageModel
 import torch
 max_seq_length = 16384 # Choose any! We auto support RoPE Scaling internally!
@@ -46,6 +50,7 @@ model = FastLanguageModel.get_peft_model(
 
 # fix data
 finetuning_dataset = []
+
 
 # training
 from trl import SFTTrainer

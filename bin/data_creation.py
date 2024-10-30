@@ -1,4 +1,5 @@
 import os
+from os import walk
 import json
 from typing import List, Dict
 from groq import Groq
@@ -26,7 +27,7 @@ class DataPipelineProcessor:
                 torch_dtype=torch.float16
             )
 
-    def generate_with_local_model(self, prompt: str, max_length: int = 512) -> str:
+    def generate_with_local_model(self, prompt: str, max_length: int = 1024) -> str:
         """Generate text using local Phi-3-mini model"""
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
         outputs = self.model.generate(
@@ -134,34 +135,48 @@ class DataPipelineProcessor:
         
         return training_data
 
-# Example usage
-def main():
-    # Use local Phi-3-mini
-    processor_local = DataPipelineProcessor(
-        use_local=True,
-        target_language="italian"
-    )
-    
-    # Or use Groq
-    processor_groq = DataPipelineProcessor(
-        use_local=False,
-        groq_api_key=GROQ_API_KEY,
-        target_language="italian"
-    )
-    
-    sample_text = """
+
+def read_file(file_path: str) -> str:
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return f.read()
+
+
+def get_data_from_folder(folder_path: str) -> List[str]:
+    data = []
+    for root, dirs, files in walk(folder_path):
+        for file in files:
+            if file.endswith('.txt'):
+                text = read_file(f"{folder_path}/{file}")
+                data.append(text)
+    return data
+
+
+def get_sample_data() -> str:
+    return """
     Students must submit absence notes within 3 days of returning to school.
     Notes should include the date of absence, reason, and parent signature.
     For extended absences of more than 3 days, a doctor's note is required.
     """
+
+
+def main():
     
-    # Choose which processor to use
-    processor = processor_groq  # or processor_groq or processor_local
-    training_data = processor.process_document(sample_text)
-    
+    USE_LOCAL = False  # Set to True to use local Phi-3-mini model
+    USE_SAMPLE_DATA = True  # Set to True to use sample data instead of folder
+
+    processor = DataPipelineProcessor(
+        use_local=USE_LOCAL,
+        groq_api_key=GROQ_API_KEY,
+        target_language="italian"
+    )
+
+    text = get_sample_data() if USE_SAMPLE_DATA else get_data_from_folder('../flussi/')
+
+    training_data = processor.process_document(text)
+
     # Save to JSON file
     with open('../flussi/training_data.json', 'w', encoding='utf-8') as f:
-        json.dump(training_data, f, ensure_ascii=False, indent=2)
+        json.dump(training_data, f, ensure_ascii=False, indent=4)
 
 if __name__ == "__main__":
     main()
