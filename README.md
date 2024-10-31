@@ -57,6 +57,20 @@ This program counts the number of tokens in a dataset.
 
 python >= 3.9
 
+Create a .env file in the root directory with the following variables:
+
+```bash
+GROQ_API_KEY="your_groq_api_key"
+```
+
+Also add:
+
+```bash
+HUGGINGFACE_TOKEN="your_huggingface_token"
+```
+
+In case you are fine-tuning the model, and you want to save the model to your Hugging Face account.
+
 To run the project, you need to have Python installed on your machine. You can download Python from the [official website](https://www.python.org/downloads/)
 
 Make sure you have a virtual environment running on your machine. If you don't have it, you can create it by running the following commands:

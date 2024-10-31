@@ -3,32 +3,28 @@ da modificare per adattarlo al nostro caso
 '''
 
 from transformers import AutoTokenizer
+import json
 
-FILES = [
-    "data/{}-1.txt",
-    "data/{}-2.txt",
-    "data/{}-3.txt",
-    "data/{}-4.txt",
-    "data/{}-5.txt",
-]
-INSTRUCTION = "Summarize the following story in my style"
+FILE = "../data/training_data.json"
+INSTRUCTION = "You are a helpful assistant on a school community home page. You are responsible for answering questions about the school's courses, events, announcements, and general information. Respond in Italian.  Be concise, friendly, and engaging."
 
 tokenizer = AutoTokenizer.from_pretrained(
-    "unsloth/llama-3-8b-bnb-4bit"
+    "unsloth/Meta-Llama-3.1-70B-bnb-4bit"
 )
 
 print(f"{'Total':<12}{'Instruction':<12}{'Story':<12}{'Summary':<12}")
-for pair in FILES:
-    with open(pair.format("story"), "r") as file:
-        story = "".join(file.readlines())
-    with open(pair.format("summary"), "r") as file:
-        summary = "".join(file.readlines())
 
-    # Count tokens
-    instruction_tokens = tokenizer(INSTRUCTION, return_tensors="pt")["input_ids"].shape[1]
-    story_tokens = tokenizer(story, return_tensors="pt")["input_ids"].shape[1]
-    summary_tokens = tokenizer(summary, return_tensors="pt")["input_ids"].shape[1]
+with open(FILE, "r") as f:
+    data = json.load(f)
+    for item in data:
+        prompt = item["prompt"]
+        story = item["story"]
 
-    # Print table of tokens
-    total_tokens = instruction_tokens + story_tokens + summary_tokens
-    print(f"{total_tokens:<12}{instruction_tokens:<12}{story_tokens:<12}{summary_tokens:<12}")
+        # Count tokens
+        instruction_tokens = tokenizer(INSTRUCTION, return_tensors="pt")["input_ids"].shape[1]
+        prompt_tokens = tokenizer(prompt, return_tensors="pt")["input_ids"].shape[1]
+        story_tokens = tokenizer(story, return_tensors="pt")["input_ids"].shape[1]
+
+        # Print table of tokens
+        total_tokens = instruction_tokens + story_tokens + prompt_tokens
+        print(f"{total_tokens:<12}{instruction_tokens:<12}{story_tokens:<12}{story_tokens:<12}")
