@@ -62,18 +62,21 @@ To run the project, you need to have Python installed on your machine. You can d
 Make sure you have a virtual environment running on your machine. If you don't have it, you can create it by running the following commands:
 
 Liunx:
+
 ```bash
 $ python3 -m venv .venv
 $ source .venv/bin/activate
 ```
 
 Windows:
+
 ```bash
 $ python -m venv .venv
 $ .venv\Scripts\activate
 ```
 
 Install dependencies:
+
 ```bash
 $ pip install -r requirements.txt
 ```
