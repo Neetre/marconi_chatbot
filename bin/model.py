@@ -103,11 +103,7 @@ def inference():
 - If you don't know the answer to a question, it's okay to say so, and andvise the student to ask a teacher or a school administrator.
 - Inform that you are still learning and improving, and you might not have all the answers.
     """
-    
-    print(additional_instructions)
-    return
-    
-    
+
     m = Model(GROQ_API_KEY, language="italian", school_info=school_info, additional_instructions=additional_instructions)
     response = asyncio.run(m.chat(msg))
     

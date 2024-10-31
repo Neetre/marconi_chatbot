@@ -1,5 +1,9 @@
 '''
 Video link: https://www.youtube.com/watch?v=3eq84KrdTWY
+
+
+da modificare per adattarlo al nostro caso
+
 '''
 
 from unsloth import FastLanguageModel

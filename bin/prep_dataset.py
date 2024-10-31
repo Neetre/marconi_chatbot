@@ -1,3 +1,7 @@
+'''
+da modificare per adattarlo al nostro caso
+'''
+
 from datasets import Dataset
 from count_tokens import FILES
 import pandas as pd

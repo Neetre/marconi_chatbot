@@ -1,3 +1,7 @@
+'''
+da modificare per adattarlo al nostro caso
+'''
+
 from transformers import AutoTokenizer
 
 FILES = [

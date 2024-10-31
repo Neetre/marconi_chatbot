@@ -170,12 +170,12 @@ def main():
         target_language="italian"
     )
 
-    text = get_sample_data() if USE_SAMPLE_DATA else get_data_from_folder('../flussi/')
+    text = get_sample_data() if USE_SAMPLE_DATA else get_data_from_folder('../data/')
 
     training_data = processor.process_document(text)
 
     # Save to JSON file
-    with open('../flussi/training_data.json', 'w', encoding='utf-8') as f:
+    with open('../data/training_data.json', 'w', encoding='utf-8') as f:
         json.dump(training_data, f, ensure_ascii=False, indent=4)
 
 if __name__ == "__main__":
