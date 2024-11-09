@@ -4,6 +4,8 @@
 
 Collection of different programs for the Marconi Chatbot project.
 
+## Programs
+
 ### model.py
 
 This program creates a chatbot that uses the [Groq API](https://groq.com) to return a text response from a model offered by the API. It will also run a simple chat interface that allows the user to interact with the chatbot.
@@ -63,13 +65,17 @@ Create a .env file in the root directory with the following variables:
 GROQ_API_KEY="your_groq_api_key"
 ```
 
+Go to the [Groq API](https://console.groq.com/playground) website to get your key.
+
 Also add:
 
 ```bash
 HUGGINGFACE_TOKEN="your_huggingface_token"
 ```
 
-In case you are fine-tuning the model, and you want to save the model to your Hugging Face account.
+Go to the [Hugging Face](https://huggingface.co/docs/hub/security-tokens) website to get your token.
+
+In case you are **fine-tuning** the model, and you want to save the model to your Hugging Face account.
 
 To run the project, you need to have Python installed on your machine. You can download Python from the [official website](https://www.python.org/downloads/)
 
@@ -94,6 +100,12 @@ Install dependencies:
 ```bash
 $ pip install -r requirements.txt
 ```
+
+## Links
+
+- [Money Sheet](https://docs.google.com/spreadsheets/d/1lcTVjObpK_JuiXuOtysZtq38bzckFuMH4qnUXEXj2b8/edit?usp=sharing)
+
+- [Unsloth](https://unsloth.ai)
 
 ## License
 
