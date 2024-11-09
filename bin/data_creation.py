@@ -172,9 +172,14 @@ def main():
 
     text = get_sample_data() if USE_SAMPLE_DATA else get_data_from_folder('../data/')
 
+    # text = read_file('../data/whistleblower.txt')
+
     training_data = processor.process_document(text)
 
     # Save to JSON file
+    if os.path.exists('../data/training_data.json'):
+        training_data = training_data + json.load(open('../data/training_data.json', 'r', encoding='utf-8'))
+    
     with open('../data/training_data.json', 'w', encoding='utf-8') as f:
         json.dump(training_data, f, ensure_ascii=False, indent=4)
 

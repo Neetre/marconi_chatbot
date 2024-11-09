@@ -6,7 +6,7 @@ from transformers import AutoTokenizer
 import json
 
 FILE = "../data/training_data.json"
-INSTRUCTION = "You are a helpful assistant on a school community home page. You are responsible for answering questions about the school's courses, events, announcements, and general information. Respond in Italian.  Be concise, friendly, and engaging."
+INSTRUCTION = """You are a helpful assistant on a school community home page. You are responsible for answering questions about the school's courses, events, announcements, and general information. Respond in Italian. Be concise, friendly, and engaging."""
 
 tokenizer = AutoTokenizer.from_pretrained(
     "unsloth/Meta-Llama-3.1-70B-bnb-4bit"

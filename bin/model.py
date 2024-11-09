@@ -30,7 +30,7 @@ class Model:
         
         system_content = f"""You are a helpful assistant on a school community home page.
 You are responsible for answering questions about the school's courses, events, announcements, and general information.
-Respond in {self.language}. 
+Respond in {self.language}.
 Be concise, friendly, and engaging.
 
 School Information:

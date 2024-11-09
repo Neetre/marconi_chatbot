@@ -79,9 +79,9 @@ trainer = SFTTrainer(
     args = TrainingArguments(
         per_device_train_batch_size = 8,
         gradient_accumulation_steps = 8,
-        warmup_steps = 500,
+        warmup_steps = 500,  # 50
         # num_train_epochs = 1, # Set this for 1 full training run.
-        max_steps=10000,
+        max_steps=10000,  # 1000
         learning_rate = 2e-4,
         fp16 = not is_bfloat16_supported(),
         bf16 = is_bfloat16_supported(),
@@ -111,7 +111,6 @@ output = model.generate(**inputs, streamer = text_streamer, max_new_tokens = 204
 print(tokenizer.decode(output[0], skip_special_tokens = True)) # Print the generated text
 
 # Save the model
-
 # Merge to 16bit
 if True: model.save_pretrained_merged("model", tokenizer, save_method = "merged_16bit",)
 if True: model.push_to_hub_merged("hf/model", tokenizer, save_method = "merged_16bit", token = HUGGINGFACE_TOKEN)
