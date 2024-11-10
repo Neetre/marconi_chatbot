@@ -18,13 +18,13 @@ with open(FILE, "r") as f:
     data = json.load(f)
     for item in data:
         prompt = item["prompt"]
-        story = item["story"]
+        answer = item["answer"]
 
         # Count tokens
         instruction_tokens = tokenizer(INSTRUCTION, return_tensors="pt")["input_ids"].shape[1]
         prompt_tokens = tokenizer(prompt, return_tensors="pt")["input_ids"].shape[1]
-        story_tokens = tokenizer(story, return_tensors="pt")["input_ids"].shape[1]
+        answer_tokens = tokenizer(answer, return_tensors="pt")["input_ids"].shape[1]
 
         # Print table of tokens
-        total_tokens = instruction_tokens + story_tokens + prompt_tokens
-        print(f"{total_tokens:<12}{instruction_tokens:<12}{story_tokens:<12}{story_tokens:<12}")
+        total_tokens = instruction_tokens + answer_tokens + prompt_tokens
+        print(f"{total_tokens:<12}{instruction_tokens:<12}{answer_tokens:<12}{answer_tokens:<12}")

@@ -8,7 +8,7 @@ da modificare per adattarlo al nostro caso
 
 from unsloth import FastLanguageModel
 import torch
-from prep_dataset import create_datasets
+from finetune.prep_dataset import create_datasets
 import os
 from dotenv import load_dotenv
 load_dotenv()

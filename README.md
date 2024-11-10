@@ -1,116 +1,111 @@
-# marconi_chatbot
+# Marconi Chatbot
 
-## Description
+## Overview
+A comprehensive collection of tools and programs for building and training the Marconi Chatbot, featuring multilingual capabilities and fine-tuning options using various AI models.
 
-Collection of different programs for the Marconi Chatbot project.
+## Features
+- Chat interface powered by Groq API
+- Automated multilingual training data generation
+- Model fine-tuning capabilities using Llama3.1
+- Token counting utilities
+- Support for Italian language localization
 
 ## Programs
 
-### model.py
+### Chat Interface
+#### `model.py`
+- Implements a chatbot using the [Groq API](https://groq.com)
+- Provides an interactive chat interface
+- Supports multiple Groq-hosted models
 
-This program creates a chatbot that uses the [Groq API](https://groq.com) to return a text response from a model offered by the API. It will also run a simple chat interface that allows the user to interact with the chatbot.
+### Fine-tuning Tools
+#### `prep_dataset.py`
+- Prepares training data for model fine-tuning
+- Formats data according to model requirements
 
-### finetune programs
+#### `count_tokens_finetune.py`
+- Analyzes token count in fine-tuning datasets
+- Ensures data compatibility with model limitations
 
-- prep_dataset.py
-- count_tokens_finetune.py
-- finetune_llama.py
+#### `finetune_llama.py`
+- Fine-tunes Llama3.1 model using [Unsloth](https://unsloth.ai)
+- Integrates with [Hugging Face](https://huggingface.co) for model management
 
-These programs are used to fine-tune the Llama3.1 model, using [Unsloth](https://unsloth.ai) and the [Hugging Face](https://huggingface.co) library. The first program prepares the dataset, the second counts the tokens in the dataset, and the third fine-tunes the model.
+### Data Generation Pipeline
+#### `data_creation.py`
+An automated pipeline for generating multilingual training data:
 
-### data_creation.py
+1. **Text Summarization**
+   - Condenses documents into key points
+   - Preserves critical information and policy details
 
-Automated Training Data Generation Pipeline for Multilingual AI Models
+2. **Q&A Generation**
+   - Creates 3-5 contextually relevant Q&A pairs
+   - Ensures natural, conversational tone
 
-Overview of the Data Processing Workflow
-
-The pipeline transforms raw text documents into structured, multilingual training data for an AI model through a sophisticated, multi-stage process. Here's how it works:
-
-1. **Text Summarization**: 
-   - The input document is first condensed into key points
-   - Uses advanced language models to extract essential information
-   - Preserves critical details and policy nuances
-
-2. **Question-Answer Pair Generation**:
-   - The summary is used to create multiple (typically 3-5) relevant Q&A pairs
-   - Ensures comprehensive coverage of the source material
-   - Generates natural, conversational questions matching the source context
-
-3. **Translation and Localization**:
-   - Each question and answer is translated to the target language (in this case, Italian)
+3. **Translation & Localization**
+   - Translates content to Italian
    - Maintains formal school communication style
-   - Preserves technical terminology and contextual meaning
+   - Preserves technical terminology
 
-4. **Training Data Formatting**:
-   - Transforms Q&A pairs into a structured prompt-response format
-   - Adds system instructions to define the AI's role (school office assistant)
-   - Prepares data in a format compatible with instruction-tuning models
+4. **Data Formatting**
+   - Structures data for instruction-tuning
+   - Includes system role definitions
+   - Outputs JSON-formatted training data
 
-5. **Output**:
-   - Generates a JSON file containing structured, multilingual training data
-   - Each entry includes a prompt and corresponding response
-   - Ready to be used for fine-tuning language models
+### Utilities
+#### `count_tokens.py`
+- Utility for analyzing token counts in datasets
+- Helps optimize data for model training
 
-### count_tokens.py
+## Installation
 
-This program counts the number of tokens in a dataset.
+### Prerequisites
+- Python 3.9 or higher
+- Virtual environment tool
 
-## Requirements
+### Environment Setup
 
-python >= 3.9
+1. Create and activate a virtual environment:
 
-Create a .env file in the root directory with the following variables:
+   **Linux/macOS:**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+
+   **Windows:**
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate
+   ```
+
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### API Configuration
+
+Create a `.env` file in the project root with the following:
 
 ```bash
 GROQ_API_KEY="your_groq_api_key"
-```
-
-Go to the [Groq API](https://console.groq.com/playground) website to get your key.
-
-Also add:
-
-```bash
 HUGGINGFACE_TOKEN="your_huggingface_token"
 ```
 
-Go to the [Hugging Face](https://huggingface.co/docs/hub/security-tokens) website to get your token.
+- Get your Groq API key from the [Groq Console](https://console.groq.com/playground)
+- Get your Hugging Face token from [Hugging Face Tokens](https://huggingface.co/docs/hub/security-tokens) (required for fine-tuning)
 
-In case you are **fine-tuning** the model, and you want to save the model to your Hugging Face account.
+## Additional Resources
+- [Project Budget Tracking](https://docs.google.com/spreadsheets/d/1lcTVjObpK_JuiXuOtysZtq38bzckFuMH4qnUXEXj2b8/edit?usp=sharing)
+- [Unsloth Documentation](https://unsloth.ai)
 
-To run the project, you need to have Python installed on your machine. You can download Python from the [official website](https://www.python.org/downloads/)
-
-Make sure you have a virtual environment running on your machine. If you don't have it, you can create it by running the following commands:
-
-Liunx:
-
-```bash
-$ python3 -m venv .venv
-$ source .venv/bin/activate
-```
-
-Windows:
-
-```bash
-$ python -m venv .venv
-$ .venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
-$ pip install -r requirements.txt
-```
-
-## Links
-
-- [Money Sheet](https://docs.google.com/spreadsheets/d/1lcTVjObpK_JuiXuOtysZtq38bzckFuMH4qnUXEXj2b8/edit?usp=sharing)
-
-- [Unsloth](https://unsloth.ai)
+## Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Authors
-
-[Neetre](https://github.com/Neetre)
+## Author
+- [Neetre](https://github.com/Neetre)

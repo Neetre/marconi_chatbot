@@ -8,7 +8,7 @@ The datasets are then saved in the datasets folder.
 '''
 
 from datasets import Dataset
-from count_tokens_finetune import FILE, INSTRUCTION
+from finetune.count_tokens_finetune import FILE, INSTRUCTION
 import pandas as pd
 import json
 

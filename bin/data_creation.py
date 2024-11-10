@@ -172,7 +172,7 @@ def main():
 
     text = get_sample_data() if USE_SAMPLE_DATA else get_data_from_folder('../data/')
 
-    # text = read_file('../data/whistleblower.txt')
+    # text = read_file('../data/raw/whistleblower.txt')
 
     training_data = processor.process_document(text)
 
