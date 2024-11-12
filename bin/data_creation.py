@@ -43,7 +43,7 @@ class DataPipelineProcessor:
         """Generate text using Groq API"""
         completion = self.client.chat.completions.create(
             messages=messages,
-            model="mixtral-8x7b-32768",  # Groq's most capable model
+            model="llama-3.1-8b-instant",  # Groq's most capable model, mixtral-8x7b-32768
             temperature=0.7,
         )
         return completion.choices[0].message.content
@@ -170,9 +170,9 @@ def main():
         target_language="italian"
     )
 
-    text = get_sample_data() if USE_SAMPLE_DATA else get_data_from_folder('../data/')
+    # text = get_sample_data() if USE_SAMPLE_DATA else get_data_from_folder('../data/')
 
-    # text = read_file('../data/raw/whistleblower.txt')
+    text = read_file('../data/raw/whistleblower.txt')
 
     training_data = processor.process_document(text)
 
