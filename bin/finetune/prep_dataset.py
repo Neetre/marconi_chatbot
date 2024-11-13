@@ -8,7 +8,7 @@ The datasets are then saved in the datasets folder.
 '''
 
 from datasets import Dataset
-from finetune.count_tokens_finetune import FILE, INSTRUCTION
+from count_tokens_finetune import FILE, INSTRUCTION
 import pandas as pd
 import json
 
@@ -29,32 +29,30 @@ def combine_texts(instruction, prompt, answer):
 """}
 
 
-def create_datasets():
+def create_dataset():
     """
     Create the training and test datasets for the finetuning of the model
     """
-    for pair in FILE:
-        with open(pair, "r") as f:
-            data = json.load(f)
-
-            for item in data:
-                prompt = item["prompt"]
-                answer = item["answer"]
-                
-                df_instructions = pd.concat(
-                [df_instructions, pd.DataFrame([{'text': INSTRUCTION}])],
-                ignore_index=True
-                )
-
-                df_prompts = pd.concat(
-                [df_prompts, pd.DataFrame([{'text': prompt}])],
-                ignore_index=True
-                )
-
-                df_answers = pd.concat(
-                [df_answers, pd.DataFrame([{'text': answer}])],
-                ignore_index=True
-                )
+    global df_instructions, df_prompts, df_answers
+    
+    with open(FILE, "r") as f:
+        data = json.load(f)
+        for item in data:
+            prompt = item["prompt"]
+            answer = item["answer"]
+            
+            df_instructions = pd.concat(
+            [df_instructions, pd.DataFrame([{'text': INSTRUCTION}])],
+            ignore_index=True
+            )
+            df_prompts = pd.concat(
+            [df_prompts, pd.DataFrame([{'text': prompt}])],
+            ignore_index=True
+            )
+            df_answers = pd.concat(
+            [df_answers, pd.DataFrame([{'text': answer}])],
+            ignore_index=True
+            )
 
 def clean_test_dataset(test_dataset):
     """
@@ -79,8 +77,9 @@ def create_datasets():
     Returns:
         Dataset, Dataset: the training and test datasets
     """
+    create_dataset()
     combined_texts = [combine_texts(instruction, prompt, answer) for instruction, prompt, answer in zip(df_instructions["text"], df_prompts["text"], df_answers["text"])]
-
+    print(combined_texts)
     finetuning_dataset = Dataset.from_dict({"text": [ct["text"] for ct in combined_texts]})
 
     print(finetuning_dataset[0]['text'])
@@ -90,3 +89,8 @@ def create_datasets():
     test_dataset = clean_test_dataset(test_dataset)
     
     return train_dataset, test_dataset
+
+
+train_dataset, test_dataset = create_datasets()
+print(train_dataset[0])
+print(test_dataset[0])
