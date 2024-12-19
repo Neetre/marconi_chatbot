@@ -43,7 +43,7 @@ class DataPipelineProcessor:
         """Generate text using Groq API"""
         completion = self.client.chat.completions.create(
             messages=messages,
-            model="llama-3.1-8b-instant",  # Groq's most capable model, mixtral-8x7b-32768
+            model="mixtral-8x7b-32768",  # Groq's most capable model, mixtral-8x7b-32768, llama-3.1-8b-instant
             temperature=0.7,
         )
         return completion.choices[0].message.content
@@ -63,7 +63,7 @@ class DataPipelineProcessor:
     def generate_qa_pairs(self, summary: str) -> List[Dict[str, str]]:
         """Generate relevant Q&A pairs from the summary."""
         if self.use_local:
-            prompt = f"""Generate 3 relevant question-answer pairs from this text. Format as JSON array with 'question' and 'answer' fields.
+            prompt = f"""Generate 6 relevant question-answer pairs from this text. Format as JSON array with 'question' and 'answer' fields.
             
             Text: {summary}
             
@@ -71,11 +71,10 @@ class DataPipelineProcessor:
             response = self.generate_with_local_model(prompt)
         else:
             messages = [
-                {"role": "system", "content": "Generate 3 relevant question-answer pairs from this text. Return as JSON array with 'question' and 'answer' fields."},
+                {"role": "system", "content": "Generate 6 relevant question-answer pairs from this text. Return as JSON array with 'question' and 'answer' fields."},
                 {"role": "user", "content": summary}
             ]
             response = self.generate_with_groq(messages)
-            print(response)
         try:
             # Clean up the response to ensure it's valid JSON
             response = response.strip()
@@ -162,7 +161,7 @@ def get_sample_data() -> str:
 def main():
     
     USE_LOCAL = False  # Set to True to use local Phi-3-mini model
-    USE_SAMPLE_DATA = True  # Set to True to use sample data instead of folder
+    USE_SAMPLE_DATA = False  # Set to True to use sample data instead of folder
 
     processor = DataPipelineProcessor(
         use_local=USE_LOCAL,
@@ -170,11 +169,11 @@ def main():
         target_language="italian"
     )
 
-    text = get_sample_data() if USE_SAMPLE_DATA else get_data_from_folder('../data/')
+    text = get_sample_data() if USE_SAMPLE_DATA else get_data_from_folder('../data/raw')
 
     # text = read_file('../data/raw/whistleblower.txt')
 
-    training_data = processor.process_document(text)
+    training_data = processor.process_document(text[0])
 
     # Save to JSON file
     if os.path.exists('../data/training_data.json'):
