@@ -79,7 +79,6 @@ def create_datasets():
     """
     create_dataset()
     combined_texts = [combine_texts(instruction, prompt, answer) for instruction, prompt, answer in zip(df_instructions["text"], df_prompts["text"], df_answers["text"])]
-    print(combined_texts)
     finetuning_dataset = Dataset.from_dict({"text": [ct["text"] for ct in combined_texts]})
 
     print(finetuning_dataset[0]['text'])

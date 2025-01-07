@@ -8,14 +8,14 @@ da modificare per adattarlo al nostro caso
 
 from unsloth import FastLanguageModel
 import torch
-from finetune.prep_dataset import create_datasets
+from prep_dataset import create_datasets
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 
-max_seq_length = 16384 # Choose any! We auto support RoPE Scaling internally! Suggested 4096, 8192, 16384
+max_seq_length = 8192 # Choose any! We auto support RoPE Scaling internally! Suggested 4096, 8192, 16384
 dtype = None # None for auto detection. Float16 for Tesla T4, V100, Bfloat16 for Ampere+
 load_in_4bit = True # Use 4bit quantization to reduce memory usage. Can be False.
 
@@ -98,7 +98,6 @@ trainer = SFTTrainer(
 trainer_stats = trainer.train() # Train the model!
 
 # evaluation
-# alpaca_prompt = Copied from above
 FastLanguageModel.for_inference(model) # Enable native 2x faster inference
 inputs = tokenizer(
     [train_dataset[0]["text"]],
