@@ -76,7 +76,6 @@ class DataPipelineProcessor:
             ]
             response = self.generate_with_groq(messages)
         try:
-            # Clean up the response to ensure it's valid JSON
             response = response.strip()
             if not response.startswith('['):
                 response = response[response.find('['):]
@@ -112,20 +111,15 @@ class DataPipelineProcessor:
 
     def process_document(self, text: str) -> List[Dict[str, str]]:
         """Process entire document through the pipeline."""
-        # Step 1: Summarize
         summary = self.summarize_text(text)
-        
-        # Step 2: Generate Q&A pairs
+
         qa_pairs = self.generate_qa_pairs(summary)
-        
-        # Step 3: Translate and create prompts
+
         training_data = []
         for qa in qa_pairs:
-            # Translate both question and answer
             translated_q = self.translate_content(qa['question'])
             translated_a = self.translate_content(qa['answer'])
-            
-            # Create prompt format
+
             training_pair = self.create_training_prompt({
                 'question': translated_q,
                 'answer': translated_a
@@ -160,8 +154,8 @@ def get_sample_data() -> str:
 
 def main():
     
-    USE_LOCAL = False  # Set to True to use local Phi-3-mini model
-    USE_SAMPLE_DATA = False  # Set to True to use sample data instead of folder
+    USE_LOCAL = False
+    USE_SAMPLE_DATA = False
 
     processor = DataPipelineProcessor(
         use_local=USE_LOCAL,
@@ -181,6 +175,7 @@ def main():
     
     with open('../data/training_data.json', 'w', encoding='utf-8') as f:
         json.dump(training_data, f, ensure_ascii=False, indent=4)
+
 
 if __name__ == "__main__":
     main()

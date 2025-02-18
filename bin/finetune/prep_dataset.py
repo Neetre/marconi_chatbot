@@ -7,7 +7,7 @@ The datasets are then saved in the datasets folder.
 
 '''
 
-from datasets import Dataset
+from datasets import Dataset, load_dataset
 from count_tokens_finetune import FILE, INSTRUCTION
 import pandas as pd
 import json
@@ -15,6 +15,22 @@ import json
 df_instructions = pd.DataFrame(columns=['text'])
 df_prompts = pd.DataFrame(columns=['text'])
 df_answers = pd.DataFrame(columns=['text'])
+
+from unsloth import FastLanguageModel
+import torch
+max_seq_length = 2048
+dtype = None
+load_in_4bit = True
+
+model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name = "unsloth/Meta-Llama-3.1-8B",
+    max_seq_length = max_seq_length,
+    dtype = dtype,
+    load_in_4bit = load_in_4bit,
+)
+
+
+EOS = tokenizer.eos_token
 
 def combine_texts(instruction, prompt, answer):
     """Combines texts in LLaMA chat format for fine-tuning"""
@@ -26,7 +42,7 @@ def combine_texts(instruction, prompt, answer):
 
 ### Answer
 {answer}
-"""}
+""" + EOS}
 
 
 def create_dataset():
@@ -62,11 +78,10 @@ def clean_test_dataset(test_dataset):
         test_dataset (dict): the test dataset
 
     Returns:
-        dict: the test dataset without the answers
+        test_dataset (dict): only question
     """
     for i in range(len(test_dataset)):
-        test_dataset[i]['text'] = test_dataset[i]['text'].split("### Answer")[0]
-        test_dataset[i]['text'] = test_dataset[i]['text'] + "### Answer\n" # add the answer section back but empty
+        test_dataset[i]['text'] = test_dataset[i]['text'].split("### Answer")[0].split("### Prompt")[1].strip().strip("\n")
         return test_dataset
 
 
@@ -83,13 +98,12 @@ def create_datasets():
 
     print(finetuning_dataset[0]['text'])
 
-    train_dataset = finetuning_dataset.train_test_split(test_size=0.1)['train']
-    test_dataset = finetuning_dataset.train_test_split(test_size=0.1)['test']  # should remove the asnwers from the combined_texts
+    train_dataset, test_dataset = finetuning_dataset.train_test_split(test_size=0.1)['train']
     test_dataset = clean_test_dataset(test_dataset)
     
     return train_dataset, test_dataset
 
-
+dataset = load_dataset("yahma/alpaca-cleaned", split = "train")
 train_dataset, test_dataset = create_datasets()
 print(train_dataset[0])
 print(test_dataset[0])
