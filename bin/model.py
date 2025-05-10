@@ -85,6 +85,7 @@ def home():
 def inference():
     data = request.get_json()
     msg = data['message']
+    print(msg)
     school_info = """
     Name: ITI G. Marconi
     Location: Verona, Italy
@@ -106,7 +107,7 @@ def inference():
 
     m = Model(GROQ_API_KEY, language="italian", school_info=school_info, additional_instructions=additional_instructions)
     response = asyncio.run(m.chat(msg))
-    
+    print(response)
     return jsonify({"response": response})
 
 
