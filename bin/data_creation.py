@@ -93,21 +93,20 @@ class DataPipelineProcessor:
 
     def generate_qa_pairs(self, summary: str) -> List[Dict[str, str]]:
         """Generate relevant Q&A pairs from the summary."""
+        if self.use_local:
+            prompt = f"""Generate 6 relevant question-answer pairs from this text. Format as JSON array with 'question' and 'answer' fields.
+            
+            Text: {summary}
+            
+            Q&A pairs:"""
+            response = self.generate_with_local_model(prompt)
+        else:
+            messages = [
+                {"role": "system", "content": "Generate 6 relevant question-answer pairs from this text. Return as JSON array with 'question' and 'answer' fields."},
+                {"role": "user", "content": summary}
+            ]
+            response = self.generate_with_groq(messages)
         try:
-            if self.use_local:
-                prompt = f"""Generate 6 relevant question-answer pairs from this text. Format as JSON array with 'question' and 'answer' fields.
-                
-                Text: {summary}
-                
-                Q&A pairs:"""
-                response = self.generate_with_local_model(prompt)
-            else:
-                messages = [
-                    {"role": "system", "content": "Generate 6 relevant question-answer pairs from this text. Return as JSON array with 'question' and 'answer' fields."},
-                    {"role": "user", "content": summary}
-                ]
-                response = self.generate_with_groq(messages)
-
             response = response.strip()
             if not response.startswith('['):
                 response = response[response.find('['):]
@@ -166,41 +165,57 @@ class DataPipelineProcessor:
 
     def process_document(self, text: str) -> List[Dict[str, str]]:
         """Process entire document through the pipeline."""
-        try:
-            # Step 1: Summarize
-            summary = self.summarize_text(text)
+        summary = self.summarize_text(text)
 
-            # Step 2: Generate Q&A pairs
-            qa_pairs = self.generate_qa_pairs(summary)
+        qa_pairs = self.generate_qa_pairs(summary)
 
-            # Step 3: Translate and create prompts
-            training_data = []
-            for qa in qa_pairs:
-                # Translate both question and answer
-                translated_q = self.translate_content(qa['question'])
-                translated_a = self.translate_content(qa['answer'])
+        training_data = []
+        for qa in qa_pairs:
+            translated_q = self.translate_content(qa['question'])
+            translated_a = self.translate_content(qa['answer'])
 
-                # Create prompt format
-                training_pair = self.create_training_prompt({
-                    'question': translated_q,
-                    'answer': translated_a
-                })
-                training_data.append(training_pair)
+            training_pair = self.create_training_prompt({
+                'question': translated_q,
+                'answer': translated_a
+            })
+            training_data.append(training_pair)
+        
+        return training_data
 
-            return training_data
-        except Exception as e:
-            logger.error(f"Error processing document: {e}")
-            raise
+
+def read_file(file_path: str) -> str:
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return f.read()
+
+
+def get_data_from_folder(folder_path: str) -> List[str]:
+    data = []
+    for root, dirs, files in walk(folder_path):
+        for file in files:
+            if file.endswith('.txt'):
+                text = read_file(f"{folder_path}/{file}")
+                data.append(text)
+    return data
+
+
+def get_sample_data() -> str:
+    return """
+    Students must submit absence notes within 3 days of returning to school.
+    Notes should include the date of absence, reason, and parent signature.
+    For extended absences of more than 3 days, a doctor's note is required.
+    """
 
 
 def main():
-    """Main function to process documents and generate training data."""
-    try:
-        processor = DataPipelineProcessor(
-            use_local=USE_LOCAL,
-            groq_api_key=GROQ_API_KEY,
-            target_language=TARGET_LANGUAGE
-        )
+    
+    USE_LOCAL = False
+    USE_SAMPLE_DATA = False
+
+    processor = DataPipelineProcessor(
+        use_local=USE_LOCAL,
+        groq_api_key=GROQ_API_KEY,
+        target_language="italian"
+    )
 
         if USE_SAMPLE_DATA:
             text = [get_sample_data()]
@@ -222,11 +237,6 @@ def main():
         
         with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
             json.dump(training_data, f, ensure_ascii=False, indent=4)
-
-        logger.info(f"Training data saved to {OUTPUT_FILE}")
-
-    except Exception as e:
-        logger.error(f"Error in main function: {e}")
 
 
 if __name__ == "__main__":
